@@ -1,0 +1,3 @@
+-control_escolar_bin (Proyecto de laravel)
+- public_html
+	- control escolar (carpeta public de laravel)

@@ -1,0 +1,12 @@
+[10-Aug-2018 01:50:31 UTC] PHP Fatal error:  Can't use method return value in write context in /home4/svrsyste/control_escolar_bin/app/Http/Controllers/Admin/PDFController.php on line 419
+[10-Aug-2018 01:50:40 UTC] PHP Fatal error:  Can't use method return value in write context in /home4/svrsyste/control_escolar_bin/app/Http/Controllers/Admin/PDFController.php on line 419
+[10-Aug-2018 01:51:33 UTC] PHP Fatal error:  Can't use method return value in write context in /home4/svrsyste/control_escolar_bin/app/Http/Controllers/Admin/PDFController.php on line 419
+[12-Sep-2018 09:50:11 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 09:51:18 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 09:54:23 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 09:58:40 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 10:00:01 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 10:00:21 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 10:03:09 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 10:04:28 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
+[12-Sep-2018 10:04:39 America/Mexico_City] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0
