@@ -27,6 +27,7 @@ class PDFfichaInscripcionController extends Controller
 
       $estudiante = Estudiante::getDatosActa($estuidante_id);
       $documentos = TipoDocumentoEstudiante::getDocumentosEstudiante($estuidante_id);
+      $documentosLista = TipoDocumentoEstudiante::all();
       // dd($documentos);
       
       $pdf->AddPage();
@@ -234,102 +235,69 @@ class PDFfichaInscripcionController extends Controller
     	$pdf->setXY(143,137);
     	$pdf->Cell(57,4, utf8_decode('Fecha de salida (año, mes, día)'), 1, 1, 'C',$fill);
 
-    	$pdf->SetFont('Times','',11);
-    	$pdf->setXY(15,141);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,1), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,141);
-    	$pdf->Cell(57,6, utf8_decode('Acta de Nacimeinto'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,141);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,141);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
-
-    	$pdf->setXY(15,147);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,0), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,147);
-    	$pdf->Cell(57,6, utf8_decode('Certificado Total de Secundaria'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,147);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,147);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
-
-    	$pdf->setXY(15,153);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,2), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,153);
-    	$pdf->Cell(57,6, utf8_decode('Certificado Total de Bachillerato'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,153);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,153);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
-
-    	$pdf->setXY(15,159);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,5), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,159);
-    	$pdf->Cell(57,6, utf8_decode('Certificado Parcial'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,159);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,159);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
-
-    	$pdf->setXY(15,165);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,0), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,165);
-    	$pdf->Cell(57,6, utf8_decode('Dictamen de Equivalencia'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,165);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,165);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
-
-    	$pdf->setXY(15,171);
-    	$pdf->Cell(15,6, $this -> searchDocument($documentos,0), 1, 1, 'C',$fill);
-    	$pdf->setXY(30,171);
-    	$pdf->Cell(57,6, utf8_decode('Fotografías'), 1, 1, 'L',$fill);
-    	$pdf->setXY(87,171);
-    	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
-    	$pdf->setXY(143,171);
-    	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
+        // dd($documentosLista);
+        $y = $pdf->getY();
+        foreach ($documentosLista as $documento) {
+        	$pdf->SetFont('Times','',11);
+        	$pdf->setXY(15,$y);
+        	$pdf->Cell(15,6, $this -> searchDocument($documentos,$documento->id), 1, 1, 'C',$fill);
+        	$pdf->setXY(30,$y);
+        	$pdf->Cell(57,6, utf8_decode($documento -> tipo_documento), 1, 1, 'L',$fill);
+        	$pdf->setXY(87,$y);
+        	$pdf->Cell(56,6,'', 1, 1, 'L',$fill);
+        	$pdf->setXY(143,$y);
+        	$pdf->Cell(57,6, '', 1, 1, 'L',$fill);
+            $y +=6;
+        }
 
     	//Datos restantes
-    	$pdf->setXY(15,179);
+        $y += 5;
+    	$pdf->setXY(15,$y);
     	$pdf->Cell(15,5, utf8_decode('¿Reliza Equivalencia?'), 0, 1, 'L',$fill);
-    	$pdf->setXY(15,184);
+        $y += 5;
+    	$pdf->setXY(15,$y);
     	$pdf->Cell(5,5, '', 1, 1, 'L',$fill);
-    	$pdf->setXY(20,184);
+    	$pdf->setXY(20,$y);
     	$pdf->Cell(10,5, utf8_decode('SI'), 0, 1, 'L',$fill);
-    	$pdf->setXY(30,184);
+    	$pdf->setXY(30,$y);
     	$pdf->Cell(5,5, '', 1, 1, 'L',$fill);
-    	$pdf->setXY(35,184);
+    	$pdf->setXY(35,$y);
     	$pdf->Cell(10,5, 'No', 0, 1, 'L',$fill);
-    	$pdf->setXY(160,179);
+        $y -= 5;
+    	$pdf->setXY(160,$y);
     	$pdf->Cell(15,5, utf8_decode('Causal'), 0, 1, 'L',$fill);
-    	$pdf->setXY(160,184);
+        $y += 5;
+    	$pdf->setXY(160,$y);
     	$pdf->Cell(5,5, '', 1, 1, 'L',$fill);
-    	$pdf->setXY(165,184);
+    	$pdf->setXY(165,$y);
     	$pdf->Cell(10,5, utf8_decode('Baja'), 0, 1, 'L',$fill);
-    	$pdf->setXY(175,184);
+    	$pdf->setXY(175,$y);
     	$pdf->Cell(5,5, '', 1, 1, 'L',$fill);
-    	$pdf->setXY(180,184);
+    	$pdf->setXY(180,$y);
     	$pdf->Cell(10,5, utf8_decode('Titulación'), 0, 1, 'L',$fill);
 
-
-    	$pdf->setXY(15,192);
+        $y += 10;
+    	$pdf->setXY(15,$y);
     	$pdf->Cell(185,5, utf8_decode('ESTADO DONDE CURSO SU: XXXXXXXX '), 1, 1, 'L',$fill);
-    	$pdf->setXY(15,197);
+        $y += 5;
+    	$pdf->setXY(15,$y);
     	$pdf->Cell(185,5, utf8_decode('MEDIO POR EL CUAL SE ENTERO DE ESTA INSTITUCIÓN: ' . $estudiante -> medio_enterado), 1, 1, 'L',$fill);
-    	$pdf->setXY(15,202);
+        $y += 5;
+    	$pdf->setXY(15,$y);
     	$pdf->Cell(92.5,5, utf8_decode('LUGAR DONDE TRABAJA: ' . $estudiante -> empresa), 1, 1, 'L',$fill);
-    	$pdf->setXY(107.5,202);
+    	$pdf->setXY(107.5,$y);
     	$pdf->Cell(92.5,5, utf8_decode('PUESTO: ' . $estudiante -> puesto), 1, 1, 'L',$fill);
 
     	//IMPORTANTE
+        $y += 10;
     	$pdf->SetFont('Times','B',11);
-    	$pdf->setXY(15,210);
+    	$pdf->setXY(15,$y);
     	$pdf->MultiCell(185,5, utf8_decode('IMPORTANTE: El plazo máximo para entregar documentos sera de tres meses contados a partir de la fecha de Inscripción, el no cumplir con este requerimiento será causa de baja escolar.'), 0, 'J',$fill);
-
-    	$pdf->setX(15);
+        $y +=15;
+    	$pdf->setXY(15,$y);
     	$pdf->MultiCell(185,5, utf8_decode('Estoy de acuerdo y conforme con las condiconesgenerales que establce esta institución como son el formato de Condiciones Generales, Normatividad General y el Calendario Escolar vigentes.'), 0, 'J',$fill);
 
-    	$y = $pdf->getY() + 5;
+    	$y += 15;
 
     	$pdf->SetFont('Times','I',11);
     	$pdf->setXY(15,$y);

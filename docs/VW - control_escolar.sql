@@ -19,8 +19,11 @@ as
         email,
         fecha_nacimiento,
         modalidad_estudiante,
+        estado_estudiante_id,
+        estado_estudiante,
         medio_enterado,
         empresa_id,
+        CONCAT(nivel_academico, ' en ', especialidad ) as especialidad,
         empresa,
         puesto
     from estudiantes
@@ -29,7 +32,10 @@ as
         left join municipios 				on municipios.id 						= localidades.municipio_id
         left join modalidades_estudiantes 	on modalidades_estudiantes.id 			= estudiantes.modalidad_id
         left join medios_enterados 			on medios_enterados.id 					= estudiantes.medio_enterado_id
-        left join estudiantes_trabajos 		on estudiantes_trabajos.estudiante_id 	= estudiantes.id
+        left join estudiantes_trabajos      on estudiantes_trabajos.estudiante_id   = estudiantes.id
+        left join estados_estudiantes       on estados_estudiantes.id               = estudiantes.estado_estudiante_id
+        left join especialidades            on especialidades.id                    = estudiantes.especialidad_id
+        left join niveles_academicos        on niveles_academicos.id                = especialidades.nivel_academico_id
         left join empresas 					on empresas.id 							= estudiantes_trabajos.empresa_id;
         
 drop view if exists vw_fechas_examenes;
@@ -97,6 +103,7 @@ as
 		asignaturas.codigo,
         clases.clase,
         asignaturas.asignatura ,
+        clases.turno ,
         concat(datos_generales.nombre,' ',datos_generales.apaterno,' ',datos_generales.amaterno) as docente,
         clases.periodo_id,
         clases.especialidad_id

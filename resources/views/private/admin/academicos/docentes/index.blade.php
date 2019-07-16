@@ -44,6 +44,7 @@
                 <th>Apellido Paterno</th>
                 <th>Apellido Materno</th>
                 <th>Edad</th>
+                <th>Último perido activo</th>
                 <th>Teléfono</th>
                 <th>RFC</th>
                 <th>Título</th>
@@ -58,6 +59,7 @@
                 <th>Apellido Paterno</th>
                 <th>Apellido Materno</th>
                 <th>Edad</th>
+                <th>Último perido activo</th>
                 <th>Teléfono</th>
                 <th>RFC</th>
                 <th>Título</th>

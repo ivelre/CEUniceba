@@ -9,13 +9,22 @@
 
 		<div class="row">
 
-			<div class="input-field col s10 offset-s1 hide">
-				<i class="material-icons prefix">work</i>
-				<select id="asignatura_id">
-	        <option v-for="materia in reticula" :value="materia.id">@{{ materia.asignatura }}</option>
-	      </select>
-				<label>Asignaturas</label>
-			</div>
+				<div class="input-field col s5 offset-s1">
+					<i class="material-icons prefix">work</i>
+					<input type="text" id="asignatura_text" class="autocomplete">
+					{{-- <select id="asignatura_id">
+		        <option v-for="materia in reticula" :value="materia.id">@{{ materia.asignatura }}</option>
+		      </select> --}}
+					<label>Asignaturas</label>
+				</div>
+				<div class="input-field col s5">
+					<i class="material-icons prefix">work</i>
+					<input type="text" id="clase_text" class="autocomplete">
+					{{-- <select id="asignatura_id">
+		        <option v-for="materia in reticula" :value="materia.id">@{{ materia.asignatura }}</option>
+		      </select> --}}
+					<label>Grupos</label>
+				</div>
 
 				<div class="input-field col s10 offset-s1">
 					<i class="material-icons prefix">work</i>

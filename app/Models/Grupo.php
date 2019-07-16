@@ -36,8 +36,13 @@ class Grupo extends Model
             ->leftjoin('kardexs','kardexs.grupo_id','grupos.id')
             ->where('grupos.clase_id', $clase_id)
             ->orderby('nombre','asc');
-        if($oportunidad_id != null)
-            $response->where('grupos.oportunidad_id', $oportunidad_id);
+        if($oportunidad_id != null){
+            if($oportunidad_id == 1)
+                $response->whereRaw('(grupos.oportunidad_id = 1 OR grupos.oportunidad_id = 2)');
+            else
+                $response->where('grupos.oportunidad_id', $oportunidad_id);
+        }
+        // dd($response -> tosql());
         return $response->get();
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::post('login','Auth\ApiLoginController@login');
+// Route::post('/set/archivo','Admin\Caja\cajaController@setArchivo');
 
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

@@ -59,12 +59,16 @@ class ClaseController extends Controller
         }
         $docentes = Docente::get();
         $dias = Dia::get();
+        $newClase = Clase::orderBy('id','desc')->first();
+        $newClase -> clase ++;
+        $newClase -> turno = '';
         return view('private.admin.academicos.clases.create',[
             'docentes'          => $docentes,
             'asignaturas'       => $asignaturas_especialidad,
             'dias'              => $dias,
             'periodo_id'        => $request->periodo_id,
-            'especialidad_id'   => $request->especialidad_id
+            'especialidad_id'   => $request->especialidad_id,
+            'clase'   => $newClase
         ]);
     }
 

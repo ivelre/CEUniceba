@@ -81,9 +81,9 @@
         <thead>
             <tr>
                 <th>Código asignatura</th>
-                {{-- <th>Turno</th> --}}
                 <th>Nombre</th>
                 <th>Asignatura</th>
+                <th>Turno</th>
                 <th>Docente</th>
                 <th>Grupo</th>
                 <th>Editar</th>
@@ -93,9 +93,9 @@
         <tfoot>
             <tr>
                 <th>Código asignatura</th>
-                {{-- <th>Turno</th> --}}
                 <th>Nombre</th>
                 <th>Asignatura</th>
+                <th>Turno</th>
                 <th>Docente</th>
                 <th>Grupo</th>
                 <th>Editar</th>
@@ -111,18 +111,30 @@
       <div class="row">
           <br>
 
-          <button id="openActaSC" class="waves-effect waves-light btn center-align blue darken-2">Sin calificaciones<i class="material-icons left">print</i></button>
-
-          <button id="openActa" class="waves-effect waves-light btn center-align blue darken-2">Ordinario<i class="material-icons left">print</i></button>
+          <div class="col s4"><button id="openActa" class="col s12 waves-effect waves-light btn center-align blue darken-2">Ordinario<i class="material-icons left">print</i></button></div>
 
 
-          <button id="openActaEX" class="waves-effect waves-light btn center-align blue darken-2">Extraordinarios<i class="material-icons left">print</i></button>
+          <div class="col s4"><button id="openActaEX" class="col s12 waves-effect waves-light btn center-align blue darken-2">Extraordinarios<i class="material-icons left">print</i></button></div>
 
-          <button id="openActaES" class="waves-effect waves-light btn center-align blue darken-2">Especiales<i class="material-icons left">print</i></button> 
+          <div class="col s4"><button id="openActaES" class="col s12 waves-effect waves-light btn center-align blue darken-2">Especiales<i class="material-icons left">print</i></button> </div>
 
-          <br> <br>
+      </div>
 
-          <button id="openLista" class="waves-effect waves-light btn center-align blue darken-2">Lista de asistencia<i class="material-icons left">print</i></button>
+      <div class="row">
+
+          <div class="col s4"><button id="openActaSC" class="col s12 waves-effect waves-light btn center-align blue darken-2">Ordinario S/C<i class="material-icons left">print</i></button></div>
+
+
+          <div class="col s4"><button id="openActaEXSC" class="col s12 waves-effect waves-light btn center-align blue darken-2">Extraordinarios S/C<i class="material-icons left">print</i></button></div>
+
+          <div class="col s4"><button id="openActaESSC" class="col s12 waves-effect waves-light btn center-align blue darken-2">Especiales S/C<i class="material-icons left">print</i></button> </div>
+
+
+      <div class="row">
+          <br>
+          <div class="col s4"><br>
+
+          <button id="openLista" class="col s12 waves-effect waves-light btn center-align blue darken-2">Lista de asistencia<i class="material-icons left">print</i></button></div>
 
       </div>
 		</div>
@@ -153,7 +165,7 @@
 			}
 			if(add)
 				grupos.push({clase_id:clase,print:true})
-			console.log(grupos);
+			// console.log(grupos);
 		}
 
 		if (typeof(Storage) !== "undefined") {
@@ -168,24 +180,49 @@
 		}
 
 		$('#openActa').click(function(event) {
-            setPrint(1,1)
-        });
+        setPrint(1,1)
+    });
 
-        $('#openActaSC').click(function(event) {
-            setPrint(2,null)
-        });
+    $('#openActaSC').click(function(event) {
+        setPrint(2,null)
+    });
 
-        $('#openActaEX').click(function(event) {
-            setPrint(2,2)
-        });
+    $('#openActaEX').click(function(event) {
+        setPrint(1,3)
+    });
 
-        $('#openActaES').click(function(event) {
-            setPrint(2,3)
-        });
+    $('#openActaES').click(function(event) {
+        setPrint(1,7)
+    });
 
-        $('#openLista').click(function(event) {
-            setPrint(3,null)
-        });
+    $('#openActaEXSC').click(function(event) {
+        setPrint(2,3)
+    });
+
+    $('#openActaESSC').click(function(event) {
+        setPrint(2,7)
+    });
+
+    $('#openLista').click(function(event) {
+        const {value: fruit} = Swal.fire({
+              title: '¿Qué rango de mes desea imprimir?',
+              input: 'select',
+              inputOptions: {
+                0: 'Enero - Febrero',
+                1: 'Marzo -  Abril',
+                2: 'Mayo - Junio',
+                3: 'Julio - Agosto',
+                4: 'Septiembre - Octubre',
+                5: 'Noviembre - Diciembre'
+              },
+              inputPlaceholder: 'Seleccione un rango de mes',
+              showCancelButton: false,
+              inputValidator: (value) => {
+                // console.log(value);
+                setPrint(3,value)
+              }
+            })
+    });
 
     function setPrint(tipo,oportunidad_id){
     		if(tipo != 3)
@@ -207,7 +244,7 @@
             })
             axios.post('../pdf/grupo/gruposPrint',gruposPrint).then(response=>{
                 if(tipo == 3)
-                    window.open('../pdf/grupo/lista/', '_blank');
+                    window.open('../pdf/grupo/lista/'+oportunidad_id, '_blank');
                 else
                     window.open('../pdf/grupo/calificaciones/' + tipo , '_blank');
             }).catch(response=>{

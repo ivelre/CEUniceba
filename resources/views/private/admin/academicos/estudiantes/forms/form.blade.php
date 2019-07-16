@@ -478,26 +478,35 @@
 
 	<div class="input-field col s12 l3">
 		<i class="material-icons prefix">group</i>
-		<select name="grupo" id="grupo" class="validate
-		@if( $errors->has('grupo')) 
-			invalid
-		@endif" required="" aria-required="true"
-		value="@if(old('grupo')){{ old('grupo') }}@elseif(isset($estudiante)){{ $estudiante->grupo }}@endif">
-			<option value="">Seleccione un grupo</option>
-			@foreach($grupos as $grupo)
-			<option value="{{ $grupo->grupo }}" id="g-{{ $grupo->grupo }}">{{ $grupo->grupo }}</option>
-			@endforeach
-		</select>
+		@if(isset($estudiante))
+		<input  class="autocomplete" type="text" name="grupo" id="grupo" value="{{$estudiante->grupo}}">
+		@else
+		<input  class="autocomplete" type="text" name="grupo" id="grupo">
+		@endif
 		<label for="grupo"
 		@if( $errors->has('grupo')) 
 			class="active"
 			data-error=" {{ $errors->first('grupo',':message') }} "  
 		@endif>*Grupo</label>
-		@if(isset($estudiante))
 		@section('inline-script')
-		<script type="text/javascript">$("#grupo").val('{{$estudiante->grupo}}').change();</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var data = {}
+		    @foreach($grupos as $grupo)
+		    data['{{$grupo -> grupo}}'] = null;
+		    @endforeach
+
+				$('#grupo').autocomplete({
+			    data: data,
+			    limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
+			    onAutocomplete: function(val) {
+			      // Callback function when value is autcompleted.
+			    },
+			    minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+			  });
+			});
+		</script>
 		@endsection
-		@endif
 	</div>
 
 	<div class="input-field col s12 l3">
@@ -721,7 +730,7 @@
 		</div>
 
 		<div class="col s6">
-			<input id="documento_{{$loop->index}}" name="documento[{{ $tipo_documento->id }}]" type="file" class="dropify" data-show-remove="false" data-max-file-size="3M" data-allowed-file-extensions="jpg png jpeg"
+			<input id="documento_{{$loop->index}}" name="documento[{{ $tipo_documento->id }}]" type="file" class="dropify" data-show-remove="false" data-max-file-size="3M" data-allowed-file-extensions="pdf"
 			@if (isset($documentos_estudiantes))
 				{{ $match = false }}
 				@foreach ($documentos_estudiantes as $documento_estudiante)

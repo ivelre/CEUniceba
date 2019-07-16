@@ -564,6 +564,7 @@ class PDFController extends Controller
           $clase = Clase::getDatosClase($grupo['clase_id']);
           $oportunidad_acta = \Session::get('oportunidad_id');
           $grupo = Grupo::getAlumosGrupo($grupo['clase_id'],$oportunidad_acta);
+          // dd($grupo);
 
           $pdf = $this->getActasExamen($pdf,$clase,$grupo,$tipo,$oportunidad_acta);
         }

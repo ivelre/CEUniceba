@@ -32,6 +32,7 @@ use App\Models\PlanEspecialidad;
 use App\Models\Estudiante;
 use App\Models\Kardex;
 use App\Models\Test_adeudo;
+use App\Models\pagoEstudiante;
 class FastExcelImporter extends Importer
 {
     public function import(string $model, $file)
@@ -77,6 +78,8 @@ class FastExcelImporter extends Importer
             case 'estudiantes':                   return $this->importEstudiantes($file);
 
             case 'temp_adeudos':                    return $this->importAdeudos($file);
+
+            case 'pagos_estudiantes':                    return $this->pagos_estudiantes($file);
         }
     }
     private function importMediosEnterados($file)
@@ -248,6 +251,23 @@ class FastExcelImporter extends Importer
         Test_adeudo::truncate();
         return $this->importManyFromFile($file, Test_adeudo::class, [
             'matricula',
+        ]);
+    }
+
+    private function pagos_estudiantes($file) 
+    {
+        return $this->importManyFromFile($file, pagoEstudiante::class, [
+            'estudiante_id', 
+            new OptionalField('recibo_folio'), 
+            'fecha_pago', 
+            'concepto_id', 
+            'cantidad', 
+            'mes_inicio', 
+            'mes_final', 
+            'anio', 
+            'hecho_por_id', 
+            new OptionalField('catalogo_contabilidad_id'), 
+            new OptionalField('banco_id'),
         ]);
     }
 

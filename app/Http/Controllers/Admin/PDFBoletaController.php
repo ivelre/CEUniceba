@@ -26,7 +26,7 @@ class PDFBoletaController extends Controller
     	$estudiante = Estudiante::getDatosBoleta($estudiante_id);
     	$periodo = Periodo::find($periodo_id );
 
-    	// dd($promedio);
+    	// dd($estudiante);
 
     	$pdf = new Fpdf('P','mm','Letter');
     	$pdf->AddPage();

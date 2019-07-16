@@ -21,6 +21,7 @@ use App\Models\Periodo;
 use App\Models\Usuario;
 use App\Models\DatoGeneral;
 use App\Models\DataTable;
+use App\Models\pagoEstudiante;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -39,6 +40,11 @@ class EstudianteController extends Controller
     public function index()
     {
         return view('private.admin.academicos.estudiantes.index');
+    }
+
+    public function getPagosEstudiante($estudiante_id)
+    {
+        return view('private.admin.academicos.estudiantes.pagos',['pagos' => pagoEstudiante::getPagosEstudiante($estudiante_id),'nombre' => Estudiante::getNombreEstudiante($estudiante_id) -> nombre]);
     }
 
     /**

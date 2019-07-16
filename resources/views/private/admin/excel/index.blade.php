@@ -129,6 +129,10 @@
 					<i class="material-icons pointer" onclick="sendFile('temp_adeudos')">arrow_upward</i>
 					{{-- <i class="material-icons pointer" onclick="retrieveFile('estadosEstudiantes')">arrow_downward</i> --}}
 				</p>
+				<p>Caja 
+					<i class="material-icons pointer" onclick="sendFile('pagos_estudiantes')">arrow_upward</i>
+					{{-- <i class="material-icons pointer" onclick="retrieveFile('estadosEstudiantes')">arrow_downward</i> --}}
+				</p>
 			</div>
 			<form action="#">
 		    <div class="file-field input-field">

@@ -24,6 +24,7 @@ class AsignaturaReticulaController extends Controller
 						['periodo_reticula',$pivot->periodo_reticula]
 					])->first();
 					$asignatura->reticula = $reticula->id;
+					$asignatura->requisitos = $this -> asignaturas_requisito($reticula->id);
 					array_push($response,$asignatura);
 				}
 			}

@@ -82,6 +82,28 @@ class Estudiante extends Model
         return $semestres;
     }
 
+    static  function getEstudianteXMatricula($matricula){
+        return \DB::table('estudiantes')
+            ->select(\DB::raw("CONCAT(apaterno , ' ' , amaterno , ' ' , nombre ) AS nombre"),'estudiantes.id')
+            ->join('datos_generales','datos_generales.id','estudiantes.dato_general_id')
+            ->where('matricula',$matricula)
+                    ->first();
+    }
+
+    static  function getEstudiantes(){
+        return \DB::table('estudiantes')
+                    ->select('estudiantes.id',\DB::raw("CONCAT(apaterno , ' ' , amaterno , ' ' , nombre ) AS nombre"),'matricula')
+            ->join('datos_generales','datos_generales.id','estudiantes.dato_general_id')
+                    ->get();
+    }
+    
+
+    static  function getEstudianteID($matricula){
+        return \DB::table('estudiantes')
+            ->where('matricula',$matricula)
+                    ->first();
+    }
+
     public function nombreSemestre($numero) {
         switch ($numero) {
             case 1: return 'Primer Semestre';
@@ -119,6 +141,14 @@ class Estudiante extends Model
         return \DB::table('estudiantes')
                 ->join('especialidades','especialidades.id','estudiantes.especialidad_id')
                 ->join('niveles_academicos','niveles_academicos.id','especialidades.nivel_academico_id')
+                ->join('datos_generales','datos_generales.id','estudiantes.dato_general_id')
+                ->where('estudiantes.id',$estudiante_id)
+                ->first();
+    }
+
+    static function getNombreEstudiante($estudiante_id){
+        return \DB::table('estudiantes')
+                ->select(\DB::raw("CONCAT(apaterno , ' ' , amaterno , ' ' , nombre ) AS nombre"))
                 ->join('datos_generales','datos_generales.id','estudiantes.dato_general_id')
                 ->where('estudiantes.id',$estudiante_id)
                 ->first();

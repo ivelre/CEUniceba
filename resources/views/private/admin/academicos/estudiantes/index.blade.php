@@ -41,6 +41,7 @@
             <tr>
                 <th>Matricula</th>
                 <th>Nombre</th>
+                <th>Especialidad</th>
                 <th>Grupo</th>
                 <th>Datos generales</th>
                 <th>Otros datos</th>
@@ -52,6 +53,7 @@
             <tr>
                 <th>Matricula</th>
                 <th>Nombre</th>
+                <th>Especialidad</th>
                 <th>Grupo</th>
                 <th>Datos generales</th>
                 <th>Otros datos</th>

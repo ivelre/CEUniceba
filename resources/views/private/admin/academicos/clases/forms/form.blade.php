@@ -12,7 +12,7 @@
 		@if( $errors->has('clase')) 
 			invalid
 		@endif" required="" aria-required="true"
-		value="@if(old('clase')){{ old('clase') }}@elseif(isset($clase)){{ $clase->clase }}@endif" >
+		value="@if(old('clase')){{ old('clase') }}@elseif(isset($clase)){{ $clase->clase}}@endif" >
 		<label for="clase"
 		@if( $errors->has('clase')) 
 			class="active"

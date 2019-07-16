@@ -21,7 +21,7 @@ class PDFListaGrupoController extends Controller
      * @author Jacobo Gonzalez Tamayo <girisnotadog@gmail.com>
      * @return pdf
      */
-		public function lista() {
+		public function lista($meses) {
       // PREPARACIÓN DE INFORMACIÓN
       //dd($clase);
       // GENERACIÓN DEL DOCUMENTO
@@ -32,7 +32,7 @@ class PDFListaGrupoController extends Controller
           $clase = Clase::getDatosClase($grupo['clase_id']);
           $grupo = Grupo::getAlumosGrupo($grupo['clase_id'],null);
 
-          $pdf = $this->getListas($pdf,$clase,$grupo);
+          $pdf = $this->getListas($pdf,$clase,$grupo,$meses);
         }
       }
 
@@ -43,7 +43,7 @@ class PDFListaGrupoController extends Controller
       exit; // Indispensable para que funcione el PDF
     }
 
-    public function getListas($pdf,$clase,$grupo) {
+    public function getListas($pdf,$clase,$grupo,$meses) {
     	// dd($clase);
 			$pdf->AddPage();
       // $pdf->Image(public_path() . '/images/pdf base/3.jpg',0,0,216,277);
@@ -162,9 +162,9 @@ class PDFListaGrupoController extends Controller
     	$pdf->setXY(23,80);
     	$pdf->Cell(74,5, 'Estudiante', 1, 1, 'C',$fill);
     	$pdf->setXY(97,80);
-    	$pdf->Cell(24,5, 'Mes', 1, 1, 'C',$fill);
+    	$pdf->Cell(24,5, utf8_decode($this->getMesLista($meses,1)), 1, 1, 'C',$fill);
     	$pdf->setXY(121,80);
-    	$pdf->Cell(24,5, 'Mes', 1, 1, 'C',$fill);
+    	$pdf->Cell(24,5, utf8_decode($this->getMesLista($meses,2)), 1, 1, 'C',$fill);
     	$pdf->setXY(145,80);
     	$pdf->Cell(6,5, 'TF', 1, 1, 'C',$fill);
     	$pdf->setXY(151,80);
@@ -228,9 +228,9 @@ class PDFListaGrupoController extends Controller
 	    $mes = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
 	    $mes = $mes[(date('m', strtotime($fecha))*1)-1];
 	    return $num.' DE '.$mes.' DE '.$ano;
-		}
+	}
 
-		function getNumeroLetra($numero){
+	function getNumeroLetra($numero){
       switch ($numero) {
         case 1:return 'UNO'; break;
         case 2:return 'DOS'; break;
@@ -246,9 +246,36 @@ class PDFListaGrupoController extends Controller
       }
     }
 
-		function getNumeroLista($numero){
+    function getNumeroLista($numero){
       if($numero < 9)
-      	return '000' . ($numero + 1);
+        return '000' . ($numero + 1);
       return '00' . ($numero + 1);
+    }
+
+    function getMesLista($meses,$pos){
+      if($meses == 0 && $pos == 1)
+        return 'Enero';
+      if($meses == 0 && $pos == 2)
+        return 'Febrero';
+      if($meses == 1 && $pos == 1)
+        return 'Marzo';
+      if($meses == 1 && $pos == 2)
+        return 'Abril';
+      if($meses == 2 && $pos == 1)
+        return 'Mayo';
+      if($meses == 2 && $pos == 2)
+        return 'Junio';
+      if($meses == 3 && $pos == 1)
+        return 'Julio';
+      if($meses == 3 && $pos == 2)
+        return 'Agosto';
+      if($meses == 4 && $pos == 1)
+        return 'Septiembre';
+      if($meses == 4 && $pos == 2)
+        return 'Octubre';
+      if($meses == 5 && $pos == 1)
+        return 'Noviembre';
+      if($meses == 5 && $pos == 2)
+        return 'Diciembre';
     }
 }

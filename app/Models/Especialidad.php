@@ -12,6 +12,13 @@ class Especialidad extends Model
     	'nivel_academico_id','clave','especialidad','reconocimiento_oficial','dges','fecha_reconocimiento','descripcion','modalidad_id','tipo_plan_especialidad_id'
     ];
 
+    static function getEspecialidades(){
+        return \DB::table('especialidades')
+            ->join('niveles_academicos','niveles_academicos.id','especialidades.nivel_academico_id')
+            ->join('planes_especialidades','planes_especialidades.especialidad_id','especialidades.id')
+            ->get();
+    }
+
     public $timestamps = false;
 
     public function planes_especialidades(){

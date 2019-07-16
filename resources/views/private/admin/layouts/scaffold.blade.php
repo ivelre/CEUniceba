@@ -11,6 +11,7 @@
 	 <!-- Compiled and minified CSS -->
   <link type="text/css" rel="stylesheet" href="{{ asset('/css/vendor.css') }}"  media="screen,projection"/>
   <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+  {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.1.0/material.min.css"> --}}
   <style type="text/css">
   	.full-modal{
   		height: 100%; width: 100%;top:0% !important; max-height: 100%

@@ -36,6 +36,8 @@ class LoginController extends Controller
         if($usuario){
             if(password_verify($request -> password,$usuario -> password)){
                 \Session::put('usuario', $usuario);
+                if(\Session::get('usuario') -> rol_id == 4)
+                    return redirect(route('caja'));
                 return redirect(route('admin.menu'));
             }else{
                 \Session::flash('msg','Tus credenciales son incorrectas. Favor de revisarlas e intente de nuevo.');        

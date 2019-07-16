@@ -13,25 +13,25 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Usuario::create([
-            'email'    => 'admin@uniceba.edu.mx',
+            'email'    => 'caja_1@uniceba.edu.mx',
             'password' => bcrypt('1234567'),
             'rol_id'   => 1
         ]);
         Usuario::create([
-            'email'    => 'ivelre@uniceba.edu.mx',
-            'password' => bcrypt('Ivelre159.'),
-            'rol_id'   => 1
-        ]);
-        Usuario::create([
-            'email'    => 'jaqueline.sanchez@uniceba.edu.mx',
+            'email'    => 'caja_2@uniceba.edu.mx',
             'password' => bcrypt('1234567'),
             'rol_id'   => 1
         ]);
-        Usuario::create([
-            'email'    => 'rector',
-            'password' => bcrypt('1234567'),
-            'rol_id'   => 1
-        ]);
+        // Usuario::create([
+        //     'email'    => 'jaqueline.sanchez@uniceba.edu.mx',
+        //     'password' => bcrypt('1234567'),
+        //     'rol_id'   => 1
+        // ]);
+        // Usuario::create([
+        //     'email'    => 'rector',
+        //     'password' => bcrypt('1234567'),
+        //     'rol_id'   => 1
+        // ]);
         //$this->call(NacionalidadesTableSeeder::class);
         
         /*$this->call(RolesUsuariosTableSeeder::class);

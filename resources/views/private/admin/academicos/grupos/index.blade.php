@@ -85,9 +85,18 @@
 
                     <div class="input-field col s12">
                         <i class="material-icons prefix">date_range</i>
+                        <div style="color: #9e9e9e;padding-left:45px;">Oportuniades</div>
+                        <select id="oportunidad" name="oportunidad">
+                          @foreach($oportunidades as $oportunidad)
+                          <option value="{{$oportunidad -> id }}">{{$oportunidad -> oportunidad }}</option>
+                          @endforeach
+                        </select>
+                    </div>
+                    <div{{--  class="input-field col s12">
+                        <i class="material-icons prefix">date_range</i>
                         <input id="oportunidad" name="oportunidad" type="text" disabled>
                         <label for="oportunidad">Oportunidad</label>
-                    </div>
+                    </di --}}v>
                     
                 </div><br>
                 <div class="section">
@@ -189,6 +198,7 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/additional-methods.js"></script>
 	<script type="text/javascript" src="{{ asset('/js/admin/academicos/grupos.js') }}"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
     <script type="text/javascript">
         $('#openActa').click(function(event) {
             printActa(1,1)
@@ -199,23 +209,41 @@
         });
 
         $('#openActaEX').click(function(event) {
-            printActa(2,2)
-        });
-
-        $('#openActaES').click(function(event) {
-            printActa(2,3)
-        });
-
-        $('#openActaEXSC').click(function(event) {
-            printActa(1,2)
-        });
-
-        $('#openActaESSC').click(function(event) {
             printActa(1,3)
         });
 
+        $('#openActaES').click(function(event) {
+            printActa(1,7)
+        });
+
+        $('#openActaEXSC').click(function(event) {
+            printActa(2,3)
+        });
+
+        $('#openActaESSC').click(function(event) {
+            printActa(2,7)
+        });
+
         $('#openLista').click(function(event) {
-            printActa(3,null)
+            const {value: fruit} = Swal.fire({
+              title: '¿Qué rango de mes desea imprimir?',
+              input: 'select',
+              inputOptions: {
+                0: 'Enero - Febrero',
+                1: 'Marzo -  Abril',
+                2: 'Mayo - Junio',
+                3: 'Julio - Agosto',
+                4: 'Septiembre - Octubre',
+                5: 'Noviembre - Diciembre'
+              },
+              inputPlaceholder: 'Seleccione un rango de mes',
+              showCancelButton: false,
+              inputValidator: (value) => {
+                // console.log(value);
+                printActa(3,value)
+              }
+            })
+
         });
 
         function printActa(tipo,oportunidad_id){
@@ -228,7 +256,7 @@
             gruposPrint.grupos = {};
             gruposPrint.oportunidad_id = oportunidad_id;
             gruposPrint.grupos[0] = {clase_id : {{$clase -> id}},print:true };
-            console.log(gruposPrint);
+            // console.log(gruposPrint);
 
             if (date == null || date == "") {
                 alert ('No ha ingresado una fecha');
@@ -239,11 +267,11 @@
                 })
                 axios.post('../pdf/grupo/gruposPrint',gruposPrint).then(response=>{
                     if(tipo == 3)
-                        window.open('../pdf/grupo/lista/', '_blank');
+                        window.open('../pdf/grupo/lista/' + oportunidad_id, '_blank');
                     else
                         window.open('../pdf/grupo/calificaciones/' + tipo, '_blank');
                 }).catch(response=>{
-                    console.log(response);
+                    // console.log(response);
                 })
                 
             }
@@ -264,7 +292,7 @@
                         if(response.data)
                             Materialize.toast('Calificación cambiada', 4000)
                     }).catch(response=>{
-                        console.log(response);
+                        // console.log(response);
                     })
                 }else{
                     $('#cal_{{ $alumno -> kardex_id }}').val({{ $alumno -> calificacion }})
@@ -276,7 +304,7 @@
         }
 
         function deleteEstudiante(kardex_id,grupo_id){
-            swal({
+            Swal.fire({
                 title: "Desea eliminar al estudiante del grupo?",
                 text: "Esta acción no se puede revertir",
                 type: "warning",
@@ -295,7 +323,7 @@
                         Materialize.toast('Estudiante eliminado', 4000)
                         location.reload();
                     }).catch(response=>{
-                        swal({
+                        Swal.fire({
                             type: "error",
                             title: "Error al eliminar el estudiante",
                             text: "El estudiante esta relacionado con uno o más datos"

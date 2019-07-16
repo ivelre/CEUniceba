@@ -119,9 +119,30 @@
               </div>
             </div>
         </li>
+        <li>
+          <div class="collapsible-header"><i class="material-icons">announcement</i>Estado del estudiante</div>
+          <div class="collapsible-body">
+             <div class="row">
+              <div class="col s8 offset-s2">
+                <div class="row">
+                @foreach($estados_estudiante as $estado_estudiante)
+                  <div class="col s3">
+                    <input name="estado_estudiante_id" type="radio" id="estado_{{ $estado_estudiante -> id}}" value="{{ $estado_estudiante -> id}}" v-model="estudiante.estado_estudiante_id" v-on:change="changeEstadoEstudiante({{ $estado_estudiante -> id }})" />
+                    <label for="estado_{{ $estado_estudiante -> id}}" v-on:change="changeEstadoEstudiante({{ $estado_estudiante -> id }})">{{ $estado_estudiante -> estado_estudiante}}</label>
+                  </div>
+                @endforeach
+                <div class="col s12">
+                  <div v-for="historial in estudiante.historial">
+                    <label>@{{historial.estado_estudiante}} - @{{historial.descripcion}} - @{{historial.fecha_cambio}}</label><br>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+        </li>
       </ul>
       <a href="#modal_kardex" class="modal-trigger waves-effect waves-light btn blue"><i class="material-icons left">add</i>Nueva materia</a>
-			<table id="table_kardex" class="display highlight " cellspacing="0" width="100%">
+			<table id="table_kardex" class="display highlight " cellspacing="0" width="100%" data-page-length='500'>
         <thead>
             <tr>
                 <th>Código</th>
@@ -144,7 +165,7 @@
                 <td>@{{materia.periodo}}</td>
                 <td>@{{materia.anio}}</td>
                 <td>
-                  <a v-on:click="editarKardex(materia.id,materia.asignatura_id,materia.oportunidad_id,materia.semestre,materia.periodo_id,materia.calificacion)" href="#modal_kardex" class="btn-floating btn-meddium waves-effect waves-light edit-estado-estudiante modal-trigger "><i class="material-icons circle green">mode_edit</i></a>
+                  <a v-on:click="editarKardex(materia.id,materia.grupo_id,materia.clase_id,materia.asignatura_id,materia.oportunidad_id,materia.semestre,materia.periodo_id,materia.calificacion)" href="#modal_kardex" class="btn-floating btn-meddium waves-effect waves-light edit-estado-estudiante modal-trigger "><i class="material-icons circle green">mode_edit</i></a>
                   <a v-on:click="borrarKardex(materia.id,materia.asignatura)" class="btn-floating btn-meddium waves-effect waves-light edit-estado-estudiante"><i class="material-icons circle red">close</i>
                 </td>
             </tr>
@@ -172,7 +193,27 @@
 @section('script')
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript">
+    // $('#table_kardex').DataTable( {
+    //     language: {
+    //         lengthMenu: "Mostrar _MENU_ por página",
+    //         zeroRecords: "No se han encontrado resustados",
+    //         info: "Página _PAGE_ de _PAGES_",
+    //         infoEmpty: "Sin registros disponibles",
+    //         infoFiltered: "(filtered from _MAX_ total records)",
+    //         sSearch: "Buscar:",
+    //         sLoadingRecords: "Cargando...",
+    //         oPaginate: {
+    //             sFirst: "Primero",
+    //             sLast: "Último",
+    //             sNext: "Siguiente",
+    //             sPrevious: "Anterior"
+    //         }
+    //     }
+    // });
+    var dReticula = null
+    var dClases = null
     var app = new Vue({
       el: '#v-app',
       data: {
@@ -182,9 +223,27 @@
         certificado:123,
         reticula:{},
         promedios:{},
-        promGeneral:{}
+        promGeneral:{},
+        clases:{},
+        asignatura_id:null,
+        clase_id:null
       },
       methods:{
+        changeEstadoEstudiante:function(estado_estudiante_id,estado_estudiante){
+          var estEst = {}
+          estEst._token = '{{ csrf_token() }}'
+          estEst.estado_estudiante_id = estado_estudiante_id
+          estEst.estudiante_id = this.estudiante.estudiante_id
+          axios.post('{{ route('kardex.cambiar.estado.estudiante') }}',estEst).then(response=>{
+              Materialize.toast('Calificación cambiada', 4000)
+              this.estudiante.estado_estudiante= estado_estudiante
+              axios.get('{{ asset('/') }}admin/academicos/kardex/' + this.estudiante.matricula).then(response=>{
+                this.estudiante.historial = response.data.historial
+              })
+          }).catch(response=>{
+              console.log(response);
+          })
+        },
         getKardex:function(){
           axios.get('{{ asset('/') }}admin/academicos/kardex/calificaciones/' + app.estudiante.estudiante_id).then(function(response) {
             app.materias = response.data
@@ -240,8 +299,45 @@
         },
         getAsignaturas: function(){
           axios.get('{{ asset('/') }}admin/academicos/kardex/reticula/' + this.estudiante.plan_especialidad_id).then(response => {
-            this.reticula = response.data
-            setTimeout(function(){ $('select').material_select(); }, 1)
+            this.reticula = response.data.reticula
+            this.clases = response.data.clases
+            dataReticula = []
+            for (var i = 0; i < this.reticula.length; i++) {
+              dataReticula[this.reticula[i].codigo + ' - ' + this.reticula[i].asignatura] = this.reticula[i].asignatura_id
+            }
+            dReticula = dataReticula;
+            $('#asignatura_text').autocomplete({
+              data: dataReticula,
+              limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
+              onAutocomplete: function(val) {
+                app.asignatura_id = dataReticula[val]
+                app.clase_id = null
+                $("#clase_text").val('')
+              },
+              minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+            });
+
+            dataClases = []
+            for (var i = 0; i < this.clases.length; i++) {
+              dataClases[this.clases[i].clase + ' - ' + this.clases[i].asignatura + ' - ' + this.clases[i].periodo] = 
+              {
+                clase_id:this.clases[i].clase_id,
+                asignatura_id:this.clases[i].asignatura_id,
+                nombre_asignatura: this.clases[i].codigo + ' - ' + this.clases[i].asignatura
+              }
+            }
+            dClases = dataClases;
+            $('#clase_text').autocomplete({
+              data: dataClases,
+              limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
+              onAutocomplete: function(val) {
+                app.clase_id = dataClases[val].clase_id
+                app.asignatura_id = dataClases[val].asignatura_id
+                $("#asignatura_text").val(dataClases[val].nombre_asignatura)
+              },
+              minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+            });
+            
           })
         },
         saveExpediente:function(){
@@ -262,7 +358,8 @@
           var kardex ={
             estudiante_id:this.estudiante.estudiante_id,
             id:$('#id').val(),
-            asignatura_id:$('#asignatura_id').val(),
+            asignatura_id:this.asignatura_id,
+            clase_id:this.clase_id,
             oportunidad_id:$('#oportunidad_id').val(),
             semestre:$('#semestre').val(),
             periodo_id:$('#periodo_id').val(),
@@ -271,6 +368,8 @@
           }
           axios.post('{{ route('NuevoElementoKardex') }}',kardex).then(response=>{
             $('#id').val('')
+            $('#asignatura_text').val('')
+            $('#clase_text').val('')
             this.getKardex()
             swal('¡Hecho!','Se ha actualizado la asignatura al kardex.','success')
             $('#modal_kardex').modal('close')
@@ -278,9 +377,18 @@
             swal('¡Oops!','No se pudo completar la operación.','warning')
           })
         },
-        editarKardex:function(id,asignatura_id,oportunidad_id,semestre,periodo_id,calificacion){
+        editarKardex:function(id,grupo_id,clase_id,asignatura_id,oportunidad_id,semestre,periodo_id,calificacion){
+          for(key in dReticula){
+            if(dReticula[key] == asignatura_id)
+              $('#asignatura_text').val(key);
+          }
+          for(key in dClases){
+            if(dClases[key].clase_id == clase_id)
+              $('#clase_text').val(key);
+          }
           $('#id').val(id)
-          $('#asignatura_id').val(asignatura_id)
+          app.asignatura_id = asignatura_id
+          app.clase_id = clase_id
           $('#oportunidad_id').val(oportunidad_id)
           $('#semestre').val(semestre)
           $('#periodo_id').val(periodo_id)
@@ -317,7 +425,7 @@
     @endforeach
 
     $(document).ready(function() {
-      $('input.autocomplete').autocomplete({
+      $('#autocomplete-input').autocomplete({
         data: data,
         limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
         onAutocomplete: function(val) {
@@ -326,12 +434,12 @@
         minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
       });
       @if($matricula != 0)
-        $('input.autocomplete').val('{{$matricula}}');
+        $('#autocomplete-input').val('{{$matricula}}');
         getData({{$matricula}})
       @endif
-      $('input.autocomplete').change(function(event) {
-        //app.getEstudiante($('input.autocomplete').val())
-        getData($('input.autocomplete').val())
+      $('#autocomplete-input').change(function(event) {
+        //app.getEstudiante($('#autocomplete-input').val())
+        getData($('#autocomplete-input').val())
       });
     })
 

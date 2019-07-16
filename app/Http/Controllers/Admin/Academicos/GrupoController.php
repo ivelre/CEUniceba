@@ -7,6 +7,7 @@ use App\Models\Clase;
 use App\Models\Kardex;
 use App\Models\Dia;
 use App\Models\Estudiante;
+use App\Models\Oportunidad;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -30,7 +31,8 @@ class GrupoController extends Controller
         return view('private.admin.academicos.grupos.index',[
             'clase' => $clase,
             'dias'  => $dias,
-            'alumnos' => Grupo::getAlumosGrupo($request->clase)
+            'alumnos' => Grupo::getAlumosGrupo($request->clase),
+            'oportunidades' => Oportunidad::all()
         ]);
     }
 

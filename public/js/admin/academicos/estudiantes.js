@@ -67,7 +67,22 @@
                     name: "matricula"
                 }, {
                     data: "nombre",
-                    name: "nombre"
+                    render: function(e, a, r, t) {
+                        var color = '#000'
+                        if( r.estado_estudiante == 'Ac' || 
+                            r.estado_estudiante == 'Bd' || 
+                            r.estado_estudiante == 'Co' || 
+                            r.estado_estudiante == 'Eg' || 
+                            r.estado_estudiante == 'Nr' || 
+                            r.estado_estudiante == 'Pe')
+                            color ='#D90000'
+                        if( r.estado_estudiante == 'Ad')
+                            color = '#47A51F'
+                        return '<p style="color:' + color + ';">' + r.nombre + '</p>'
+                    }
+                }, {
+                    data: "especialidad",
+                    name: "especialidad"
                 }, {
                     data: "grupo",
                     name: "grupo"
@@ -84,17 +99,17 @@
                 }, {
                     data: "modalidad_estudiante",
                     render: function(e, a, r, t) {
-                        if (1 == r.empresa_id) var e = "<strong>Modalidad: </strong>" + r.modalidad_estudiante + "<br><strong>Enterado por: </strong>" + r.medio_enterado + "<br><strong>Trabajo: </strong>" + r.empresa + "<br>";
-                        else var e = "<strong>Modalidad: </strong>" + r.modalidad_estudiante + "<br><strong>Enterado por: </strong>" + r.medio_enterado + "<br><strong>Trabajo: </strong>" + r.empresa + " (" + r.puesto + ")<br>";
+                        if (1 == r.empresa_id) var e = "<strong>Modalidad: </strong>" + r.modalidad_estudiante + "<br><strong>Enterado por: </strong>" + r.medio_enterado + "<br><strong>Trabajo: </strong>" + r.empresa + "<br> <strong>Estado: </strong>" + r.estado_estudiante;
+                        else var e = "<strong>Modalidad: </strong>" + r.modalidad_estudiante + "<br><strong>Enterado por: </strong>" + r.medio_enterado + "<br><strong>Trabajo: </strong>" + r.empresa + " (" + r.puesto + ")<br> <strong>Estado: </strong>" + r.estado_estudiante;
                         return e
                     }
                 }, {
                     data: "estudiante_id",
-                    render: function(e, a, r, t) {console.log(e);
-                        return '<a href="' + public_path + "admin/academicos/kardex?estudiante=" + e + '" class="btn-floating btn-meddium waves-effect waves-light">' +
-                        '<i class="material-icons circle yellow darken-4">format_list_numbered</i></a>' +
-                        '<a href="#" onclick="modalCertificado(' + e + ')" class="btn-floating btn-meddium waves-effect waves-light" target="__blank" title="Certificado de estudios totales">' + 
-                        '<i class="material-icons circle yellow darken-4">picture_as_pdf</i></a>'
+                    render: function(e, a, r, t) {
+                        return '<a href="' + public_path + "admin/academicos/kardex/ver/" + r.matricula + '" class="btn-floating btn-meddium waves-effect waves-light">' +
+                        '<i class="material-icons circle red darken-4">format_list_numbered</i></a>' +
+                        '<a href="' + public_path + "admin/academicos/estudiantes/" + e + '/pagos" class="btn-floating btn-meddium waves-effect waves-light">' +
+                        '<i class="material-icons circle orange">attach_money</i></a>' 
                     },
                     orderable: !1,
                     searchable: !1

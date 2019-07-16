@@ -9,6 +9,8 @@ use App\Models\Reticula;
 use App\Models\Periodo;
 use App\Models\Oportunidad;
 use App\Models\FechaCertificado;
+use App\Models\EstadoEstudiante;
+use App\Models\HistorialEstadoEstudiante;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -40,7 +42,7 @@ class KardexController extends Controller
         $fechas = FechaCertificado::all();
         foreach ($fechas as $key => $fecha)
             $fechas[$key] -> fecha = $this -> obtenerFechaEnLetra($fecha -> fecha_certificado);
-        return view('private.admin.academicos.kardex.cargarCalificaciones',['estudiantes' => Estudiante::all(),'oportunidades' => Oportunidad::all(),'periodos' => Periodo::all(),'fechas_certificado' => $fechas,'matricula' => $matricula]);
+        return view('private.admin.academicos.kardex.cargarCalificaciones',['estudiantes' => Estudiante::all(),'oportunidades' => Oportunidad::all(),'periodos' => Periodo::all(),'fechas_certificado' => $fechas,'matricula' => $matricula,'estados_estudiante' => EstadoEstudiante::all()]);
     }
 
     public function newKardexElemente(Request $req){
@@ -54,6 +56,17 @@ class KardexController extends Controller
         $kardex -> semestre = $req -> semestre;
         $kardex -> periodo_id = $req -> periodo_id;
         $kardex -> calificacion = $req -> calificacion;
+
+        if($req -> clase_id != null){
+            $grupo = Grupo::find($kardex -> grupo_id);
+            if(!$grupo)
+                $grupo = new Grupo;
+            $grupo -> clase_id = $req -> clase_id;
+            $grupo -> estudiante_id = $req -> estudiante_id;
+            $grupo -> oportunidad_id = $req -> oportunidad_id;
+            $grupo -> save();
+            $kardex -> grupo_id = $grupo -> id;
+        }
 
         $kardex -> save();
     }
@@ -113,14 +126,20 @@ class KardexController extends Controller
      */
     public function show($kardex)
     {
-        return response()->json(
-            Estudiante::
-            select('estudiantes.id as estudiante_id','matricula','fecha','folio','expediente','nombre','apaterno','amaterno','semestre','estado_estudiante','especialidad','plan_especialidad_id','nivel_academico_id')
+        
+        $estudiante = Estudiante::
+            select('estudiantes.id as estudiante_id','matricula','fecha','folio','expediente','nombre','apaterno','amaterno','semestre','estado_estudiante','especialidad','plan_especialidad_id','nivel_academico_id','estado_estudiante_id')
             ->join('datos_generales','datos_generales.id','estudiantes.dato_general_id')
             ->join('estados_estudiantes','estados_estudiantes.id','estudiantes.estado_estudiante_id')
             ->join('especialidades','especialidades.id','estudiantes.especialidad_id')
             ->where('matricula',$kardex)
-            ->first());
+            ->first();
+        $estudiante -> historial = HistorialEstadoEstudiante::where('estudiante_id',$estudiante -> estudiante_id)
+                            ->join('estados_estudiantes','estados_estudiantes.id','historial_estados_estudiante.estado_estudiante_id')
+                            ->orderby('historial_estados_estudiante.id','desc')
+                            ->limit(3)
+                            ->get();
+        return response()->json($estudiante);
     }
 
     /**
@@ -131,13 +150,14 @@ class KardexController extends Controller
      */
     public function getCalificaciones($estudiante_id)
     {
-        return response()->json(Reticula::select('anio','asignatura','kardexs.asignatura_id','calificacion','codigo','creditos','descripcion','kardexs.estudiante_id','fecha_reconocimiento','kardexs.id','oportunidad','kardexs.oportunidad_id','periodo','kardexs.periodo_id','periodo_reticula','plan_especialidad_id','prioridad','semestre')
+        return response()->json(Reticula::select('anio','asignatura','kardexs.asignatura_id','calificacion','codigo','creditos','descripcion','kardexs.estudiante_id','fecha_reconocimiento','kardexs.id','oportunidad','kardexs.oportunidad_id','periodo','kardexs.periodo_id','periodo_reticula','plan_especialidad_id','prioridad','semestre','grupo_id','clase_id')
             ->join('asignaturas','asignaturas.id','reticulas.asignatura_id')
             ->join('kardexs','kardexs.asignatura_id','reticulas.asignatura_id')
             // ->join('grupos','grupos.clase_id','clases.id')
+            ->leftjoin('grupos','grupos.id','kardexs.grupo_id')
             ->join('oportunidades','oportunidades.id','kardexs.oportunidad_id')
             ->join('periodos','periodos.id','kardexs.periodo_id')
-            ->where('estudiante_id',$estudiante_id)
+            ->where('kardexs.estudiante_id',$estudiante_id)
             ->orderby('asignaturas.codigo','asc')
             ->get());
     }
@@ -150,11 +170,41 @@ class KardexController extends Controller
      */
     public function getReticulaPlan($plan_especialidad_id)
     {
-        return response()->json(Reticula::join('asignaturas','asignaturas.id','reticulas.asignatura_id')
+        $reticula = Reticula::join('asignaturas','asignaturas.id','reticulas.asignatura_id')
             //->join('kardexs','kardexs.asignatura_id','asignaturas.id')
             ->where('plan_especialidad_id',$plan_especialidad_id)
             //->where('estudiante_id',$estudiante_id)
-            ->get());
+            ->get();
+
+        $clases = Reticula::select('clases.id as clase_id','asignatura','clase','periodo','reticulas.asignatura_id','codigo')
+            ->join('asignaturas','asignaturas.id','reticulas.asignatura_id')
+            ->join('clases','clases.asignatura_id','asignaturas.id')
+            ->join('periodos','periodos.id','clases.periodo_id')
+            ->where('plan_especialidad_id',$plan_especialidad_id)
+            //->where('estudiante_id',$estudiante_id)
+            ->get();
+        $response = new \stdClass;
+        $response -> reticula = $reticula;
+        $response -> clases = $clases;
+
+        return response()->json($response);
+    }
+
+    public function getClasesAlumno($plan_especialidad_id)
+    {
+        return response()->json();
+    }
+
+    public function cambiarEstadoEstudiante(Request $req){
+        $historial = new HistorialEstadoEstudiante;
+        $historial -> estado_estudiante_id = $req -> estado_estudiante_id;
+        $historial -> estudiante_id = $req -> estudiante_id;
+        $historial -> fecha_cambio = date('Y-m-d');
+        $historial ->save();
+
+        $estudiante = Estudiante::find($req -> estudiante_id);
+        $estudiante -> estado_estudiante_id = $req -> estado_estudiante_id;
+        $estudiante -> save();
     }
 
     /**
